@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__github__create_repository",
+      "Bash(git init:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git -C /mnt/c/DATA4CIRC_Work/api-specs-repo status)",
+      "Bash(xxd:*)"
+    ]
+  }
+}
