@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Documentation</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #fafafa;
+    }
+
+    .topbar {
+      background: #1b1b1b;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .topbar h1 {
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .topbar select {
+      padding: 6px 12px;
+      font-size: 0.95rem;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background: #2c2c2c;
+      color: #fff;
+      cursor: pointer;
+      min-width: 260px;
+    }
+
+    .topbar select:focus {
+      outline: none;
+      border-color: #89bf04;
+    }
+
+    #swagger-ui {
+      max-width: 1460px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>OpenAPI Documentation</h1>
+  <select id="spec-selector" onchange="loadSpec(this.value)"></select>
+</div>
+
+<div id="swagger-ui"></div>
+
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>
+  // ── Add your specs here ──────────────────────────────────────────
+  const SPECS = [
+    { name: "Petstore (sample)", url: "./specs/sample-petstore.yaml" },
+  ];
+  // ────────────────────────────────────────────────────────────────
+
+  const selector = document.getElementById("spec-selector");
+
+  // Populate dropdown
+  SPECS.forEach((s, i) => {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = s.name;
+    selector.appendChild(opt);
+  });
+
+  // Deep-link support: ?spec=<name-fragment>
+  const params = new URLSearchParams(location.search);
+  const specHint = (params.get("spec") || "").toLowerCase();
+  let startIndex = 0;
+  if (specHint) {
+    const match = SPECS.findIndex(s =>
+      s.name.toLowerCase().includes(specHint) ||
+      s.url.toLowerCase().includes(specHint)
+    );
+    if (match !== -1) startIndex = match;
+  }
+  selector.value = startIndex;
+
+  let ui;
+
+  function loadSpec(index) {
+    const spec = SPECS[index];
+    if (ui) {
+      ui.specActions.updateUrl(spec.url);
+      ui.specActions.download();
+    } else {
+      ui = SwaggerUIBundle({
+        url: spec.url,
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIBundle.SwaggerUIStandalonePreset,
+        ],
+        layout: "BaseLayout",
+        tryItOutEnabled: true,
+        docExpansion: "list",
+        filter: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+      });
+    }
+  }
+
+  loadSpec(startIndex);
+</script>
+
+</body>
+</html>
